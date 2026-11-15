@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VERBUM MIPYME DESARROLLO</title>
+<style>
+:root{--obs:#0b0b10;--pan:#14141c;--pan2:#1b1b26;--bor:#26263a;--nar:#ff7a1a;--oro:#f0b429;--mor:#8b5cf6;--tex:#e8e8f0;--dim:#9a9aad;--ok:#3ecf8e;--mal:#ff5d5d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--obs);color:var(--tex);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.45}
+header{position:sticky;top:0;z-index:10;background:rgba(11,11,16,.96);border-bottom:1px solid var(--bor);padding:10px 14px}
+header h1{margin:0;font-size:17px;letter-spacing:.5px}
+header h1 span{color:var(--nar)}
+header .sub{color:var(--dim);font-size:12px;margin-top:2px}
+header .est{float:right;color:var(--dim);font-size:11px;margin-top:4px}
+nav{display:flex;gap:4px;overflow-x:auto;background:var(--pan2);border-bottom:1px solid var(--bor);padding:0 8px;position:sticky;top:58px;z-index:9}
+nav button{background:none;border:0;color:var(--dim);padding:11px 12px;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+nav button.act{color:var(--nar);border-color:var(--nar)}
+main{max-width:1000px;margin:0 auto;padding:16px 14px 60px}
+.c{background:var(--pan);border:1px solid var(--bor);border-radius:14px;padding:14px;margin-bottom:14px}
+.c h2{margin:0 0 10px;font-size:15px;color:var(--oro)}
+.c h3{margin:12px 0 6px;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+.m{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.mc{background:var(--pan);border:1px solid var(--bor);border-radius:14px;padding:12px}
+.mc .v{font-size:20px;font-weight:700;color:var(--tex)}
+.mc .l{color:var(--dim);font-size:12px;margin-top:3px}
+.mc.n .v{color:var(--nar)} .mc.o .v{color:var(--oro)} .mc.mo .v{color:var(--mor)} .mc.ok .v{color:var(--ok)} .mc.mal .v{color:var(--mal)}
+input,select,textarea{background:var(--pan2);border:1px solid var(--bor);color:var(--tex);border-radius:9px;padding:9px 10px;font-size:14px;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--nar)}
+label{display:block;font-size:12px;color:var(--dim);margin:8px 0 3px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.btn{background:var(--nar);color:#0b0b10;border:0;border-radius:9px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn2{background:var(--pan2);color:var(--tex);border:1px solid var(--bor);border-radius:9px;padding:9px 14px;font-size:13px;cursor:pointer}
+.btn2:hover{border-color:var(--dim)}
+.mini{background:none;border:1px solid var(--bor);color:var(--dim);border-radius:7px;padding:4px 9px;font-size:12px;cursor:pointer;margin-right:4px}
+.mini:hover{color:var(--tex);border-color:var(--dim)}
+.mini.rojo{color:var(--mal)} .mini.rojo:hover{border-color:var(--mal)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--dim);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding:7px 6px;border-bottom:1px solid var(--bor)}
+td{padding:8px 6px;border-bottom:1px solid #1e1e2c}
+tr:hover td{background:#161622}
+.scrollx{overflow-x:auto}
+.badge{display:inline-block;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+.bg-ok{background:rgba(62,207,142,.15);color:var(--ok)}
+.bg-pen{background:rgba(240,180,41,.15);color:var(--oro)}
+.bg-mal{background:rgba(255,93,93,.15);color:var(--mal)}
+.empty{color:var(--dim);font-size:13px;padding:10px 0;text-align:center}
+.aviso{background:rgba(255,93,93,.12);border:1px solid rgba(255,93,93,.4);color:var(--mal);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px}
+.aviso.okv{background:rgba(62,207,142,.12);border-color:rgba(62,207,142,.4);color:var(--ok)}
+footer{border-top:1px solid var(--bor);color:var(--dim);font-size:11px;text-align:center;padding:16px;margin-top:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.abierto{display:flex}
+.modal .caja{background:var(--pan);border:1px solid var(--bor);border-radius:14px;max-width:420px;width:100%;padding:18px}
+@media print{header,nav,footer,.btn,.btn2,.mini,.modal{display:none!important}body{background:#fff;color:#000}.c,.mc{border-color:#ccc;background:#fff}}
+</style>
+</head>
+<body>
+<header>
+  <div class="est" id="guardado"></div>
+  <h1>VERBUM <span>MIPYME</span> DESARROLLO</h1>
+  <div class="sub">Gestión de inventario, ventas y clientes · offline-first · datos reales, sin simulaciones · V1.0</div>
+</header>
+<nav id="tabs"></nav>
+<main id="vista"></main>
+<footer>VERBUM Tech Solution · La Habana, Cuba · V1.0 · Los datos se guardan solo en este dispositivo (localStorage)</footer>
+<div class="modal" id="modal"><div class="caja" id="modalCaja"></div></div>
+<script>
+'use strict';
+var KEY='verbum_mipyme_v1', TABS=['inicio','inventario','ventas','clientes','datos','bitacora','config'];
+var LBL={inicio:'Inicio',inventario:'Inventario',ventas:'Ventas',clientes:'Clientes',datos:'Datos',bitacora:'Bitácora',config:'Config'};
+var TAB='inicio', S=null, TV=[], EDIT=null;
+
+function dflt(){return {negocio:'',dueno:'',contacto:'',productos:[],clientes:[],ventas:[],bitacora:[],seq:1};}
+function load(){
+  try{S=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){S=null;}
+  if(!S||typeof S!=='object'||typeof S!=='object')S=dflt();
+  var d=dflt();for(var k in d)if(S[k]===undefined)S[k]=d[k];
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));document.getElementById('guardado').textContent='Guardado '+new Date().toLocaleTimeString('es-CU');}catch(e){alerta('No se pudo guardar: '+e.message,'mal');}}
+function nid(){return 'VMD-'+String(S.seq++).padStart(5,'0');}
+function logA(txt){S.bitacora.unshift({f:new Date().toISOString(),txt:txt});if(S.bitacora.length>500)S.bitacora.length=500;}
+function fmt(n){return (Math.round((n||0)*100)/100).toLocaleString('es-CU',{minimumFractionDigits:2,maximumFractionDigits:2})+' CUP';}
+function ffecha(iso){var d=new Date(iso);return d.toLocaleDateString('es-CU',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function num(v){var n=parseFloat(String(v).replace(',','.'));return isNaN(n)?0:n;}
+function prod(pid){for(var i=0;i<S.productos.length;i++)if(S.productos[i].id===pid)return S.productos[i];return null;}
+function cli(cid){for(var i=0;i<S.clientes.length;i++)if(S.clientes[i].id===cid)return S.clientes[i];return null;}
+function pname(pid){var p=prod(pid);return p?p.nombre:'(producto eliminado)';}
+function cname(cid){var c=cli(cid);return c?c.nombre:'(sin cliente)';}
+
+function alerta(msg,tipo){
+  var d=document.createElement('div');d.className='aviso'+(tipo==='okv'?' okv':'');
+  d.textContent=msg;var v=document.getElementById('vista');v.insertBefore(d,v.firstChild);
+  setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},5000);
+}
+function modal(html){document.getElementById('modalCaja').innerHTML=html;document.getElementById('modal').classList.add('abierto');}
+function cerrarModal(){document.getElementById('modal').classList.remove('abierto');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)cerrarModal();});
+
+function buildTabs(){
+  var n=document.getElementById('tabs');n.innerHTML='';
+  TABS.forEach(function(t){
+    var b=document.createElement('button');b.textContent=LBL[t];if(t===TAB)b.className='act';
+    b.onclick=function(){TAB=t;buildTabs();renderAll();};n.appendChild(b);
+  });
+}
+function renderAll(){
+  var v=document.getElementById('vista');v.innerHTML='';
+  var fns={inicio:renderInicio,inventario:renderInventario,ventas:renderVentas,clientes:renderClientes,datos:renderDatos,bitacora:renderBitacora,config:renderConfig};
+  try{fns[TAB]();}catch(e){v.innerHTML='<div class="aviso">Error al mostrar esta sección: '+esc(e.message)+'</div>';}
+}
+
+/* ===== INICIO ===== */
+function renderInicio(){
+  var v=document.getElementById('vista'),h='';
+  var valInv=0,bajos=[],hoy=new Date(),mes=hoy.toISOString().slice(0,7);
+  var vMes=0,ingMes=0,pend=0,nPend=0,nV=0;
+  S.productos.forEach(function(p){valInv+=p.cant*p.pv;if(p.cant<=p.min)bajos.push(p);});
+  S.ventas.forEach(function(x){
+    var fm=x.fecha.slice(0,7);
+    if(fm===mes){nV++;vMes+=x.total;if(x.estado==='cobrado')ingMes+=x.total;else{nPend++;pend+=x.total;}}
+  });
+  h+='<div class="m">';
+  h+='<div class="mc n"><div class="v">'+S.productos.length+'</div><div class="l">Productos en catálogo</div></div>';
+  h+='<div class="mc o"><div class="v">'+fmt(valInv)+'</div><div class="l">Valor del inventario (a precio de venta)</div></div>';
+  h+='<div class="mc mo"><div class="v">'+nV+' / '+fmt(vMes)+'</div><div class="l">Ventas de este mes</div></div>';
+  h+='<div class="mc ok"><div class="v">'+fmt(ingMes)+'</div><div class="l">Cobrado este mes</div></div>';
+  h+='<div class="mc '+(nPend?'mal':'')+'"><div class="v">'+fmt(pend)+'</div><div class="l">Pendiente de cobro ('+nPend+' ventas)</div></div>';
+  h+='<div class="mc '+(bajos.length?'mal':'')+'"><div class="v">'+bajos.length+'</div><div class="l">Productos con stock bajo</div></div>';
+  h+='</div>';
+  h+='<div class="c"><h2>Stock bajo o agotado</h2>';
+  if(!bajos.length)h+='<div class="empty">Todo el inventario está sobre el mínimo.</div>';
+  else{h+='<div class="scrollx"><table><tr><th>Producto</th><th>Cantidad</th><th>Mínimo</th></tr>';
+    bajos.slice(0,10).forEach(function(p){h+='<tr><td>'+esc(p.nombre)+'</td><td>'+p.cant+'</td><td>'+p.min+'</td></tr>';});
+    h+='</table></div>';}
+  h+='</div>';
+  h+='<div class="c"><h2>Últimos movimientos</h2>';
+  if(!S.bitacora.length)h+='<div class="empty">Sin movimientos todavía.</div>';
+  else{h+='<div class="scrollx"><table><tr><th>Fecha</th><th>Movimiento</th></tr>';
+    S.bitacora.slice(0,8).forEach(function(b){h+='<tr><td>'+ffecha(b.f)+' '+new Date(b.f).toLocaleTimeString('es-CU',{hour:'2-digit',minute:'2-digit'})+'</td><td>'+esc(b.txt)+'</td></tr>';});
+    h+='</table></div>';}
+  h+='</div>';
+  v.innerHTML=h;
+}
+
+/* ===== INVENTARIO ===== */
+function renderInventario(){
+  var v=document.getElementById('vista'),h='';
+  h+='<div class="c"><h2>'+(EDIT?'Editar producto':'Agregar producto')+'</h2>';
+  var p=EDIT||{};
+  h+='<div class="row">';
+  h+='<div><label>Nombre *</label><input id="p_nom" value="'+esc(p.nombre||'')+'"></div>';
+  h+='<div><label>Categoría</label><input id="p_cat" value="'+esc(p.cat||'')+'"></div>';
+  h+='<div><label>Cantidad</label><input id="p_cant" type="number" step="1" value="'+(p.cant!==undefined?p.cant:0)+'"></div>';
+  h+='<div><label>Mínimo (alerta)</label><input id="p_min" type="number" step="1" value="'+(p.min!==undefined?p.min:0)+'"></div>';
+  h+='<div><label>Precio compra (CUP)</label><input id="p_pc" type="number" step="0.01" value="'+(p.pc!==undefined?p.pc:0)+'"></div>';
+  h+='<div><label>Precio venta (CUP)</label><input id="p_pv" type="number" step="0.01" value="'+(p.pv!==undefined?p.pv:0)+'"></div>';
+  h+='</div>';
+  h+='<div style="margin-top:12px"><button class="btn" onclick="guardarProd()">'+(EDIT?'Guardar cambios':'Agregar al inventario')+'</button> ';
+  if(EDIT)h+='<button class="btn2" onclick="EDIT=null;renderAll()">Cancelar</button>';
+  h+='</div></div>';
+  h+='<div class="c"><h2>Catálogo ('+S.productos.length+')</h2>';
+  h+='<input id="p_bus" placeholder="Buscar por nombre o categoría..." value="'+esc(BUS.inv||'')+'" oninput="BUS.inv=this.value;renderTablaInv()">';
+  h+='<div id="tablaInv" style="margin-top:10px"></div></div>';
+  v.innerHTML=h;renderTablaInv();
+}
+var BUS={inv:'',cli:'',ven:''};
+function renderTablaInv(){
+  var q=(BUS.inv||'').toLowerCase();
+  var lista=S.productos.filter(function(p){return !q||(p.nombre+' '+(p.cat||'')).toLowerCase().indexOf(q)>=0;});
+  var h='';
+  if(!lista.length){h='<div class="empty">'+(S.productos.length?'Sin resultados para la búsqueda.':'El catálogo está vacío: agrega tu primer producto.')+'</div>';}
+  else{h+='<div class="scrollx"><table><tr><th>Código</th><th>Producto</th><th>Cant.</th><th>Mín.</th><th>Compra</th><th>Venta</th><th>Valor</th><th></th></tr>';
+    lista.forEach(function(p){
+      h+='<tr><td style="color:var(--dim)">'+esc(p.id)+'</td><td>'+esc(p.nombre)+(p.cat?' <span style="color:var(--dim)">· '+esc(p.cat)+'</span>':'')+'</td>';
+      h+='<td style="color:'+(p.cant<=p.min?'var(--mal)':'var(--tex)')+'">'+p.cant+'</td><td>'+p.min+'</td>';
+      h+='<td>'+fmt(p.pc)+'</td><td>'+fmt(p.pv)+'</td><td>'+fmt(p.cant*p.pv)+'</td>';
+      h+='<td><button class="mini" onclick="ajStock(\''+p.id+'\',1)">+1</button><button class="mini" onclick="ajStock(\''+p.id+'\',-1)">−1</button>';
+      h+='<button class="mini" onclick="editarProd(\''+p.id+'\')">Editar</button><button class="mini rojo" onclick="borrarProd(\''+p.id+'\')">Eliminar</button></td></tr>';
+    });
+    h+='</table></div>';}
+  document.getElementById('tablaInv').innerHTML=h;
+}
+function guardarProd(){
+  var nom=document.getElementById('p_nom').value.trim();
+  if(!nom){alerta('El nombre del producto es obligatorio.');return;}
+  var d={nombre:nom,cat:document.getElementById('p_cat').value.trim(),cant:num(document.getElementById('p_cant').value),min:num(document.getElementById('p_min').value),pc:num(document.getElementById('p_pc').value),pv:num(document.getElementById('p_pv').value)};
+  if(EDIT){var p=prod(EDIT);if(p){Object.assign(p,d);logA('Editó producto '+nom);}}
+  else{d.id=nid();S.productos.push(d);logA('Agregó producto '+nom+' (cant. '+d.cant+')');}
+  EDIT=null;save();renderAll();alerta('Producto guardado.','okv');
+}
+function editarProd(id){EDIT=Object.assign({},prod(id));renderAll();}
+function ajStock(id,d){var p=prod(id);if(!p)return;var nv=p.cant+d;if(nv<0){alerta('No puede quedar por debajo de cero.');return;}p.cant=nv;logA('Ajuste de stock: '+p.nombre+' '+(d>0?'+':'')+d+' → '+nv);save();renderAll();}
+function borrarProd(id){
+  var p=prod(id);if(!p)return;
+  modal('<h3 style="color:var(--oro);margin:0 0 10px">Eliminar producto</h3><p style="font-size:14px">¿Eliminar «'+esc(p.nombre)+'» del catálogo? Las ventas antiguas lo mostrarán como (producto eliminado).</p><button class="btn" onclick="confirmarBorrarProd(\''+id+'\')">Eliminar</button> <button class="btn2" onclick="cerrarModal()">Cancelar</button>');
+}
+function confirmarBorrarProd(id){var p=prod(id);S.productos=S.productos.filter(function(x){return x.id!==id;});logA('Eliminó producto '+(p?p.nombre:id));save();cerrarModal();renderAll();}
+
+/* ===== VENTAS ===== */
+function renderVentas(){
+  var v=document.getElementById('vista'),h='';
+  var tot=0;TV.forEach(function(l){tot+=l.cant*l.pv;});
+  h+='<div class="c"><h2>Registrar venta</h2>';
+  h+='<div class="row">';
+  h+='<div><label>Cliente</label><select id="v_cli"><option value="">— sin cliente —</option>';
+  S.clientes.forEach(function(c){h+='<option value="'+c.id+'">'+esc(c.nombre)+'</option>';});
+  h+='</select></div>';
+  h+='<div><label>Fecha</label><input id="v_fec" type="date" value="'+new Date().toISOString().slice(0,10)+'"></div>';
+  h+='<div><label>Medio de cobro</label><select id="v_cob"><option>Efectivo</option><option>Transfermóvil</option><option>EnZona</option><option>Otro</option></select></div>';
+  h+='<div><label>Estado del cobro</label><select id="v_est"><option value="pendiente">Pendiente</option><option value="cobrado">Cobrado</option></select></div>';
+  h+='</div>';
+  h+='<h3>Líneas de la venta</h3>';
+  h+='<div class="row"><div style="grid-column:span 2"><select id="v_pid"><option value="">— elegir producto —</option>';
+  S.productos.forEach(function(p){h+='<option value="'+p.id+'">'+esc(p.nombre)+' (stock '+p.cant+')</option>';});
+  h+='</select></div><div><input id="v_cant" type="number" step="1" min="1" value="1" placeholder="Cantidad"></div>';
+  h+='<div><button class="btn2" onclick="addLinea()">Añadir línea</button></div></div>';
+  if(TV.length){h+='<div class="scrollx" style="margin-top:10px"><table><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th><th></th></tr>';
+    TV.forEach(function(l,i){h+='<tr><td>'+esc(pname(l.pid))+'</td><td>'+l.cant+'</td><td>'+fmt(l.pv)+'</td><td>'+fmt(l.cant*l.pv)+'</td><td><button class="mini rojo" onclick="delLinea('+i+')">Quitar</button></td></tr>';});
+    h+='</table></div><p style="margin:10px 0 0"><b style="color:var(--oro)">Total: '+fmt(tot)+'</b></p>';}
+  else h+='<div class="empty" style="margin-top:8px">Aún no hay líneas. Elige un producto y añádelo.</div>';
+  h+='<div style="margin-top:12px"><button class="btn" onclick="guardarVenta()"'+(TV.length?'':' disabled style="opacity:.5;cursor:not-allowed"')+'>Guardar venta'+(TV.length?' ('+fmt(tot)+')':'')+'</button> <button class="btn2" onclick="TV=[];renderAll()">Limpiar</button></div>';
+  h+='</div>';
+  h+='<div class="c"><h2>Historial de ventas ('+S.ventas.length+')</h2>';
+  h+='<input placeholder="Buscar por cliente o producto..." value="'+esc(BUS.ven||'')+'" oninput="BUS.ven=this.value;renderTablaVen()">';
+  h+='<div id="tablaVen" style="margin-top:10px"></div></div>';
+  v.innerHTML=h;renderTablaVen();
+}
+function addLinea(){
+  var pid=document.getElementById('v_pid').value,cant=Math.round(num(document.getElementById('v_cant').value));
+  if(!pid){alerta('Elige un producto.');return;}
+  if(cant<1){alerta('La cantidad debe ser al menos 1.');return;}
+  var p=prod(pid);if(!p)return;
+  var ya=0;TV.forEach(function(l){if(l.pid===pid)ya+=l.cant;});
+  if(ya+cant>p.cant){alerta('Stock insuficiente: '+p.nombre+' tiene '+p.cant+' ('+(ya?('ya en esta venta: '+ya):'')+')');return;}
+  TV.push({pid:pid,cant:cant,pv:p.pv});renderAll();
+}
+function delLinea(i){TV.splice(i,1);renderAll();}
+function guardarVenta(){
+  if(!TV.length)return;
+  var hoy=document.getElementById('v_fec').value||new Date().toISOString().slice(0,10);
+  var fecha=new Date(hoy+'T12:00:00').toISOString();
+  for(var i=0;i<TV.length;i++){var p=prod(TV[i].pid);if(!p||p.cant<TV[i].cant){alerta('Stock insuficiente de '+pname(TV[i].pid));return;}}
+  var total=0;TV.forEach(function(l){total+=l.cant*l.pv;});
+  var venta={id:nid(),fecha:fecha,clienteId:document.getElementById('v_cli').value,cobro:document.getElementById('v_cob').value,estado:document.getElementById('v_est').value,items:TV.map(function(l){return {pid:l.pid,cant:l.cant,pv:l.pv};}),total:total};
+  TV.forEach(function(l){var p=prod(l.pid);p.cant-=l.cant;});
+  S.ventas.unshift(venta);
+  logA('Venta '+venta.id+' · '+fmt(total)+' · '+venta.cobro+' · '+venta.estado+' · '+cname(venta.clienteId));
+  TV=[];save();renderAll();alerta('Venta '+venta.id+' registrada.','okv');
+}
+function renderTablaVen(){
+  var q=(BUS.ven||'').toLowerCase();
+  var lista=S.ventas.filter(function(x){return !q||(cname(x.clienteId)+' '+x.items.map(pname).join(' ')).toLowerCase().indexOf(q)>=0;});
+  var h='';
+  if(!lista.length)h='<div class="empty">'+(S.ventas.length?'Sin resultados.':'Aún no hay ventas registradas.')+'</div>';
+  else{h+='<div class="scrollx"><table><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Cobro</th><th>Estado</th><th></th></tr>';
+    lista.forEach(function(x){
+      h+='<tr><td style="color:var(--dim)">'+esc(x.id)+'</td><td>'+ffecha(x.fecha)+'</td><td>'+esc(cname(x.clienteId))+'</td>';
+      h+='<td>'+esc(x.items.map(function(l){return pname(l.pid)+' ×'+l.cant;}).join(', '))+'</td><td>'+fmt(x.total)+'</td><td>'+esc(x.cobro)+'</td>';
+      h+='<td><span class="badge '+(x.estado==='cobrado'?'bg-ok':'bg-pen')+'">'+(x.estado==='cobrado'?'Cobrada':'Pendiente')+'</span></td>';
+      h+='<td>'+(x.estado!=='cobrado'?'<button class="mini" onclick="cobrar(\''+x.id+'\')">Marcar cobrada</button>':'')+'<button class="mini rojo" onclick="borrarVenta(\''+x.id+'\')">Eliminar</button></td></tr>';
+    });
+    h+='</table></div>';}
+  document.getElementById('tablaVen').innerHTML=h;
+}
+function cobrar(id){var x=S.ventas.filter(function(v){return v.id===id;})[0];if(!x)return;x.estado='cobrado';x.fCobro=new Date().toISOString();logA('Cobrada venta '+id+' · '+fmt(x.total));save();renderAll();}
+function borrarVenta(id){
+  var x=S.ventas.filter(function(v){return v.id===id;})[0];if(!x)return;
+  modal('<h3 style="color:var(--oro);margin:0 0 10px">Eliminar venta</h3><p style="font-size:14px">Se eliminará '+esc(id)+' ('+fmt(x.total)+') y se devolverá el stock de sus productos.</p><button class="btn" onclick="confirmarBorrarVenta(\''+id+'\')">Eliminar</button> <button class="btn2" onclick="cerrarModal()">Cancelar</button>');
+}
+function confirmarBorrarVenta(id){
+  var x=S.ventas.filter(function(v){return v.id===id;})[0];if(!x)return;
+  x.items.forEach(function(l){var p=prod(l.pid);if(p)p.cant+=l.cant;});
+  S.ventas=S.ventas.filter(function(v){return v.id!==id;});
+  logA('Eliminó venta '+id+' (stock devuelto)');save();cerrarModal();renderAll();
+}
+
+/* ===== CLIENTES ===== */
+function renderClientes(){
+  var v=document.getElementById('vista'),h='';
+  h+='<div class="c"><h2>Agregar cliente</h2><div class="row">';
+  h+='<div><label>Nombre *</label><input id="c_nom"></div>';
+  h+='<div><label>Teléfono</label><input id="c_tel"></div>';
+  h+='<div><label>Nota</label><input id="c_nota" placeholder="preferencias, dirección..."></div>';
+  h+='</div><div style="margin-top:12px"><button class="btn" onclick="guardarCli()">Agregar cliente</button></div></div>';
+  h+='<div class="c"><h2>Clientes ('+S.clientes.length+')</h2>';
+  h+='<input placeholder="Buscar..." value="'+esc(BUS.cli||'')+'" oninput="BUS.cli=this.value;renderTablaCli()">';
+  h+='<div id="tablaCli" style="margin-top:10px"></div></div>';
+  v.innerHTML=h;renderTablaCli();
+}
+function renderTablaCli(){
+  var q=(BUS.cli||'').toLowerCase();
+  var lista=S.clientes.filter(function(c){return !q||(c.nombre+' '+(c.tel||'')).toLowerCase().indexOf(q)>=0;});
+  function deuda(cid){var d=0;S.ventas.forEach(function(x){if(x.clienteId===cid&&x.estado!=='cobrado')d+=x.total;});return d;}
+  var h='';
+  if(!lista.length)h='<div class="empty">'+(S.clientes.length?'Sin resultados.':'Aún no hay clientes.')+'</div>';
+  else{h+='<div class="scrollx"><table><tr><th>Nombre</th><th>Teléfono</th><th>Nota</th><th>Pendiente de cobro</th><th></th></tr>';
+    lista.forEach(function(c){var d=deuda(c.id);
+      h+='<tr><td>'+esc(c.nombre)+'</td><td>'+esc(c.tel||'—')+'</td><td style="color:var(--dim)">'+esc(c.nota||'')+'</td>';
+      h+='<td style="color:'+(d>0?'var(--oro)':'var(--dim)')+'">'+fmt(d)+'</td>';
+      h+='<td><button class="mini rojo" onclick="borrarCli(\''+c.id+'\')">Eliminar</button></td></tr>';});
+    h+='</table></div>';}
+  document.getElementById('tablaCli').innerHTML=h;
+}
+function guardarCli(){
+  var nom=document.getElementById('c_nom').value.trim();
+  if(!nom){alerta('El nombre del cliente es obligatorio.');return;}
+  S.clientes.push({id:nid(),nombre:nom,tel:document.getElementById('c_tel').value.trim(),nota:document.getElementById('c_nota').value.trim()});
+  logA('Agregó cliente '+nom);save();renderAll();alerta('Cliente agregado.','okv');
+}
+function borrarCli(id){
+  var c=cli(id);if(!c)return;
+  var usan=S.ventas.filter(function(x){return x.clienteId===id;}).length;
+  modal('<h3 style="color:var(--oro);margin:0 0 10px">Eliminar cliente</h3><p style="font-size:14px">¿Eliminar a «'+esc(c.nombre)+'»? Sus '+usan+' venta(s) quedarán como (sin cliente).</p><button class="btn" onclick="confirmarBorrarCli(\''+id+'\')">Eliminar</button> <button class="btn2" onclick="cerrarModal()">Cancelar</button>');
+}
+function confirmarBorrarCli(id){var c=cli(id);S.clientes=S.clientes.filter(function(x){return x.id!==id;});logA('Eliminó cliente '+(c?c.nombre:id));save();cerrarModal();renderAll();}
+
+/* ===== DATOS ===== */
+function renderDatos(){
+  var v=document.getElementById('vista'),h='';
+  h+='<div class="c"><h2>Respaldo (exportar)</h2><p style="color:var(--dim);font-size:13px">Descarga un JSON con todo el contenido. No incluye token ni claves: solo productos, clientes, ventas y bitácora.</p>';
+  h+='<button class="btn" onclick="exportar()">Descargar respaldo JSON</button><div id="sha" style="color:var(--dim);font-size:12px;margin-top:8px"></div></div>';
+  h+='<div class="c"><h2>Restaurar (importar)</h2><p style="color:var(--dim);font-size:13px">Carga un respaldo JSON. Los datos actuales se reemplazan.</p>';
+  h+='<input type="file" id="imp_file" accept=".json,application/json">';
+  h+='<div style="margin-top:12px"><button class="btn2" onclick="importar()">Importar respaldo</button></div></div>';
+  h+='<div class="c"><h2>Impresión</h2><p style="color:var(--dim);font-size:13px">Imprime o guarda en PDF la vista actual (inventario, ventas o clientes).</p>';
+  h+='<button class="btn2" onclick="window.print()">Imprimir esta vista</button></div>';
+  h+='<div class="c"><h2 style="color:var(--mal)">Borrar todo</h2><p style="color:var(--dim);font-size:13px">Elimina permanentemente los datos de este dispositivo. Exporta un respaldo antes.</p>';
+  h+='<button class="btn2" style="border-color:var(--mal);color:var(--mal)" onclick="borrarTodo()">Borrar todos los datos</button></div>';
+  v.innerHTML=h;
+}
+async function exportar(){
+  var copia=JSON.parse(JSON.stringify(S));
+  var json=JSON.stringify({app:'VERBUM MIPYME DESARROLLO',version:'1.0',exportado:new Date().toISOString(),datos:copia},null,2);
+  var hex='';
+  try{var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(json));
+    hex=Array.prototype.map.call(new Uint8Array(buf),function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
+    document.getElementById('sha').textContent='Huella SHA-256 del respaldo: '+hex;
+  }catch(e){document.getElementById('sha').textContent='';}
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+  a.download='respaldo-verbum-mipyme-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  logA('Exportó respaldo JSON'+(hex?' · SHA-256 '+hex.slice(0,12)+'…':''));save();
+}
+function importar(){
+  var f=document.getElementById('imp_file').files[0];
+  if(!f){alerta('Elige primero un archivo JSON.');return;}
+  var r=new FileReader();
+  r.onload=function(){
+    var o;try{o=JSON.parse(r.result);}catch(e){alerta('El archivo no es JSON válido.');return;}
+    var d=o&&o.datos?o.datos:o;
+    if(!d||!Array.isArray(d.productos)){alerta('El archivo no tiene el formato de este sistema.');return;}
+    modal('<h3 style="color:var(--oro);margin:0 0 10px">Importar respaldo</h3><p style="font-size:14px">Contiene '+d.productos.length+' producto(s), '+(d.clientes||[]).length+' cliente(s) y '+(d.ventas||[]).length+' venta(s). Se reemplazarán los datos actuales.</p><button class="btn" onclick="confirmarImportar()">Importar</button> <button class="btn2" onclick="cerrarModal()">Cancelar</button>');
+    window._imp=d;
+  };
+  r.readAsText(f);
+}
+function confirmarImportar(){
+  var d=window._imp;if(!d)return;
+  S=d;var dd=dflt();for(var k in dd)if(S[k]===undefined)S[k]=dd[k];
+  logA('Importó respaldo JSON');save();cerrarModal();renderAll();alerta('Datos importados.','okv');
+}
+function borrarTodo(){
+  modal('<h3 style="color:var(--mal);margin:0 0 10px">Borrar todos los datos</h3><p style="font-size:14px">Esto elimina productos, clientes, ventas y bitácora de este dispositivo. No se puede deshacer.</p><label>Para confirmar escribe BORRAR:</label><input id="conf_txt"><div style="margin-top:12px"><button class="btn" onclick="confirmarBorrarTodo()">Borrar todo</button> <button class="btn2" onclick="cerrarModal()">Cancelar</button></div>');
+}
+function confirmarBorrarTodo(){
+  if(document.getElementById('conf_txt').value!=='BORRAR'){alerta('Escribe BORRAR para confirmar.');return;}
+  localStorage.removeItem(KEY);load();TV=[];save();cerrarModal();renderAll();alerta('Datos borrados.','okv');
+}
+
+/* ===== BITACORA ===== */
+function renderBitacora(){
+  var v=document.getElementById('vista'),h='<div class="c"><h2>Bitácora ('+S.bitacora.length+')</h2>';
+  if(!S.bitacora.length)h+='<div class="empty">Sin movimientos todavía.</div>';
+  else{h+='<div class="scrollx"><table><tr><th>Fecha y hora</th><th>Movimiento</th></tr>';
+    S.bitacora.forEach(function(b){var d=new Date(b.f);
+      h+='<tr><td style="color:var(--dim)">'+ffecha(b.f)+' '+d.toLocaleTimeString('es-CU',{hour:'2-digit',minute:'2-digit'})+'</td><td>'+esc(b.txt)+'</td></tr>';});
+    h+='</table></div>';}
+  h+='</div>';v.innerHTML=h;
+}
+
+/* ===== CONFIG ===== */
+function renderConfig(){
+  var v=document.getElementById('vista'),h='';
+  h+='<div class="c"><h2>Datos del negocio</h2><div class="row">';
+  h+='<div><label>Nombre del negocio</label><input id="cf_neg" value="'+esc(S.negocio)+'"></div>';
+  h+='<div><label>Responsable</label><input id="cf_due" value="'+esc(S.dueno)+'"></div>';
+  h+='<div><label>Contacto (teléfono/correo)</label><input id="cf_con" value="'+esc(S.contacto)+'"></div>';
+  h+='</div><div style="margin-top:12px"><button class="btn" onclick="guardarConfig()">Guardar</button></div></div>';
+  h+='<div class="c"><h2>Diagnóstico</h2><div class="scrollx"><table>';
+  var okLS=true;try{localStorage.setItem('__t','1');localStorage.removeItem('__t');}catch(e){okLS=false;}
+  h+='<tr><td>Almacenamiento local</td><td><span class="badge '+(okLS?'bg-ok':'bg-mal')+'">'+(okLS?'Operativo':'No disponible')+'</span></td></tr>';
+  h+='<tr><td>Productos / clientes / ventas</td><td>'+S.productos.length+' / '+S.clientes.length+' / '+S.ventas.length+'</td></tr>';
+  h+='<tr><td>Registros de bitácora</td><td>'+S.bitacora.length+'</td></tr>';
+  h+='<tr><td>Versión</td><td>V1.0 · offline-first · sin datos simulados</td></tr>';
+  h+='</table></div></div>';
+  h+='<div class="c"><h2>Acerca de</h2><p style="font-size:13px;color:var(--dim)">VERBUM MIPYME DESARROLLO · gestión de inventario, ventas y clientes para microempresas. Todo funciona sin conexión y los datos se quedan en el dispositivo. Publicada por VERBUM Tech Solution, La Habana, Cuba.</p></div>';
+  v.innerHTML=h;
+}
+function guardarConfig(){
+  S.negocio=document.getElementById('cf_neg').value.trim();
+  S.dueno=document.getElementById('cf_due').value.trim();
+  S.contacto=document.getElementById('cf_con').value.trim();
+  logA('Actualizó datos del negocio');save();renderAll();alerta('Configuración guardada.','okv');
+}
+
+load();buildTabs();renderAll();
+</script>
+</body>
+</html>
