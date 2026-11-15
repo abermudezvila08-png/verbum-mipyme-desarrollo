@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VERBUM MIPYME DESARROLLO</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0b10">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 :root{--obs:#0b0b10;--pan:#14141c;--pan2:#1b1b26;--bor:#26263a;--nar:#ff7a1a;--oro:#f0b429;--mor:#8b5cf6;--tex:#e8e8f0;--dim:#9a9aad;--ok:#3ecf8e;--mal:#ff5d5d}
 *{box-sizing:border-box}
@@ -59,11 +62,12 @@ footer{border-top:1px solid var(--bor);color:var(--dim);font-size:11px;text-alig
 <header>
   <div class="est" id="guardado"></div>
   <h1>VERBUM <span>MIPYME</span> DESARROLLO</h1>
-  <div class="sub">Gestión de inventario, ventas y clientes · offline-first · datos reales, sin simulaciones · V1.0</div>
+  <div class="sub">Gestión de inventario, ventas y clientes · offline-first · datos reales, sin simulaciones · V1.1</div>
+<div class="sub" id="licLinea"></div>
 </header>
 <nav id="tabs"></nav>
 <main id="vista"></main>
-<footer>VERBUM Tech Solution · La Habana, Cuba · V1.0 · Los datos se guardan solo en este dispositivo (localStorage)</footer>
+<footer>VERBUM Tech Solution · La Habana, Cuba · V1.1 · Los datos se guardan solo en este dispositivo (localStorage)</footer>
 <div class="modal" id="modal"><div class="caja" id="modalCaja"></div></div>
 <script>
 'use strict';
@@ -107,6 +111,13 @@ function buildTabs(){
 }
 function renderAll(){
   var v=document.getElementById('vista');v.innerHTML='';
+  var li=document.getElementById('licLinea');
+  if(li&&S.lic){
+    if(S.lic.estado==='activa'){li.textContent='Licencia activa';li.style.color='var(--ok)';}
+    else{var d=diasRestantes();li.textContent=d>=0?('Prueba: '+d+' día'+(d===1?'':'s')+' restantes'):('Prueba vencida');
+      li.style.color=(d<=5?'var(--mal)':'var(--oro)');}
+  }
+  if(licBloqueado()){renderLicencia();return;}
   var fns={inicio:renderInicio,inventario:renderInventario,ventas:renderVentas,clientes:renderClientes,datos:renderDatos,bitacora:renderBitacora,config:renderConfig};
   try{fns[TAB]();}catch(e){v.innerHTML='<div class="aviso">Error al mostrar esta sección: '+esc(e.message)+'</div>';}
 }
@@ -369,6 +380,50 @@ function confirmarBorrarTodo(){
   localStorage.removeItem(KEY);load();TV=[];save();cerrarModal();renderAll();alerta('Datos borrados.','okv');
 }
 
+
+/* ===== LICENCIA ===== */
+var SECRETO='VMD-CLAVE-MAESTRA-2026-VERBUM-TECH-SOLUTION-#9F3';
+var DIAS_PRUEBA=30;
+var VENDEDOR='VERBUM Tech Solution · abermudezvila08@gmail.com';
+function licNuevo(){var h='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='';
+  for(var i=0;i<8;i++)s+=h[Math.floor(Math.random()*h.length)];
+  return {disp:s.slice(0,4)+'-'+s.slice(4),instalado:new Date().toISOString(),clave:null,estado:''};}
+async function sha256hex(txt){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));
+  return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2);}).join('');}
+async function clavePara(disp){var h=await sha256hex(SECRETO+':'+String(disp).trim().toUpperCase());
+  var k=h.slice(0,16).toUpperCase();
+  return k.slice(0,4)+'-'+k.slice(4,8)+'-'+k.slice(8,12)+'-'+k.slice(12,16);}
+function diasRestantes(){if(!S.lic)return DIAS_PRUEBA;
+  var t=(Date.now()-new Date(S.lic.instalado).getTime())/86400000;
+  return Math.ceil(DIAS_PRUEBA-t);}
+function licBloqueado(){if(!S.lic)return false;if(S.lic.estado==='activa')return false;return diasRestantes()<0;}
+async function verificarClave(){if(!S.lic||!S.lic.clave)return;
+  var k=await clavePara(S.lic.disp);
+  S.lic.estado=(k===S.lic.clave.trim().toUpperCase())?'activa':'invalida';save();}
+function activar(){var k=document.getElementById('lic_clave').value.trim().toUpperCase();
+  if(!k){alerta('Introduce la clave de activación.');return;}
+  S.lic.clave=k;S.lic.estado='';
+  verificarClave().then(function(){
+    if(S.lic.estado==='activa'){logA('Licencia activada · '+S.lic.disp);save();renderAll();alerta('Licencia activada. Gracias por tu compra.','okv');}
+    else{S.lic.clave=null;alerta('Clave incorrecta para este dispositivo ('+S.lic.disp+').');}});}
+function copiarDisp(){try{navigator.clipboard.writeText(S.lic.disp);alerta('Código copiado.','okv');}
+  catch(e){alerta('Copia manualmente: '+S.lic.disp);}}
+function renderLicencia(){
+  var v=document.getElementById('vista'),h='';
+  h+='<div class="c" style="text-align:center;max-width:560px;margin:26px auto 0">';
+  h+='<h2 style="font-size:18px">Periodo de prueba finalizado</h2>';
+  h+='<p style="color:var(--dim);font-size:13px">Esta instalación de VERBUM MIPYME DESARROLLO cumplió los '+DIAS_PRUEBA+' días de prueba. Tus datos quedan a salvo en este dispositivo y vuelven a estar disponibles al activar la licencia.</p>';
+  h+='<p style="font-size:13px;color:var(--dim)">Envía este código de dispositivo al vendedor para recibir tu clave:</p>';
+  h+='<div style="font-family:monospace;font-size:26px;color:var(--oro);letter-spacing:2px;margin:8px 0">'+esc(S.lic.disp)+'</div>';
+  h+='<button class="btn2" onclick="copiarDisp()">Copiar código</button>';
+  h+='<div style="margin-top:18px;text-align:left"><label>Clave de activación</label>';
+  h+='<input id="lic_clave" placeholder="XXXX-XXXX-XXXX-XXXX" style="text-transform:uppercase;font-family:monospace"></div>';
+  h+='<div style="margin-top:12px"><button class="btn" onclick="activar()">Activar licencia</button></div>';
+  h+='<p style="color:var(--dim);font-size:12px;margin-top:16px">Claves y cobro: '+esc(VENDEDOR)+'</p>';
+  h+='</div>';
+  v.innerHTML=h;
+}
+
 /* ===== BITACORA ===== */
 function renderBitacora(){
   var v=document.getElementById('vista'),h='<div class="c"><h2>Bitácora ('+S.bitacora.length+')</h2>';
@@ -393,7 +448,9 @@ function renderConfig(){
   h+='<tr><td>Almacenamiento local</td><td><span class="badge '+(okLS?'bg-ok':'bg-mal')+'">'+(okLS?'Operativo':'No disponible')+'</span></td></tr>';
   h+='<tr><td>Productos / clientes / ventas</td><td>'+S.productos.length+' / '+S.clientes.length+' / '+S.ventas.length+'</td></tr>';
   h+='<tr><td>Registros de bitácora</td><td>'+S.bitacora.length+'</td></tr>';
-  h+='<tr><td>Versión</td><td>V1.0 · offline-first · sin datos simulados</td></tr>';
+  h+='<tr><td>Versión</td><td>V1.1 · offline-first · sin datos simulados · PWA</td></tr>';
+  h+='<tr><td>Licencia</td><td>'+(S.lic.estado==='activa'?'<span class="badge bg-ok">Activa</span>':(diasRestantes()>=0?('Prueba · '+diasRestantes()+' días restantes'):'Vencida'))+'</td></tr>';
+  h+='<tr><td>Código de dispositivo</td><td style="font-family:monospace;color:var(--oro)">'+esc(S.lic.disp)+'</td></tr>';
   h+='</table></div></div>';
   h+='<div class="c"><h2>Acerca de</h2><p style="font-size:13px;color:var(--dim)">VERBUM MIPYME DESARROLLO · gestión de inventario, ventas y clientes para microempresas. Todo funciona sin conexión y los datos se quedan en el dispositivo. Publicada por VERBUM Tech Solution, La Habana, Cuba.</p></div>';
   v.innerHTML=h;
@@ -405,7 +462,16 @@ function guardarConfig(){
   logA('Actualizó datos del negocio');save();renderAll();alerta('Configuración guardada.','okv');
 }
 
-load();buildTabs();renderAll();
+async function init(){
+  load();
+  if(!S.lic){S.lic=licNuevo();logA('Instalación registrada · prueba '+DIAS_PRUEBA+' días');save();}
+  await verificarClave();
+  buildTabs();renderAll();
+  if('serviceWorker' in navigator&&location.protocol!=='file:'){
+    try{await navigator.serviceWorker.register('verbum-mipyme.sw.js');}catch(e){}
+  }
+}
+init();
 </script>
 </body>
 </html>

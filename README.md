@@ -1,50 +1,47 @@
 # VERBUM MIPYME DESARROLLO
 
-**Gestión de inventario, ventas y clientes para microempresas · offline-first · HTML autónomo sin dependencias**
+**Gestión de inventario, ventas y clientes para microempresas · PWA instalable · licencia con prueba de 30 días**
 
-VERBUM Tech Solution · La Habana, Cuba · V1.0
+VERBUM Tech Solution · La Habana, Cuba · V1.1
 
 ## Descripción
 
-Plataforma de gestión para microempresas en un único archivo `index.html`, sin frameworks ni dependencias externas. Funciona sin conexión y los datos se guardan solo en el dispositivo (localStorage).
+Aplicación en un único archivo `index.html` (PWA sin dependencias externas). Funciona sin conexión, los datos se guardan solo en el dispositivo y se instala como app nativa en Android ("Añadir a pantalla de inicio" / "Instalar aplicación").
 
 ### Módulos
 
-- **Inicio**: métricas del negocio (valor del inventario, ventas del mes, cobrado, pendiente de cobro, stock bajo).
-- **Inventario**: catálogo de productos con precios de compra y venta, control de stock con mínimo de alerta.
-- **Ventas**: registro con líneas de productos, descuento automático de stock, medio de cobro (Efectivo, Transfermóvil, EnZona, Otro) y estado del cobro (cobrado/pendiente) con conciliación manual.
-- **Clientes**: listado con pendiente de cobro acumulado por cliente.
-- **Datos**: respaldo JSON con huella SHA-256, importación, impresión/PDF y borrado total con doble confirmación.
-- **Bitácora**: registro automático de cada movimiento.
-- **Config**: datos del negocio y diagnóstico del sistema.
+- **Inicio**: métricas (valor del inventario, ventas del mes, cobrado, pendiente de cobro, stock bajo).
+- **Inventario**: productos con precios de compra/venta, stock y mínimo de alerta.
+- **Ventas**: líneas de productos, descuento de stock, medio de cobro (Efectivo, Transfermóvil, EnZona, Otro), estado cobrado/pendiente.
+- **Clientes**: pendiente de cobro acumulado por cliente.
+- **Datos**: respaldo JSON con huella SHA-256, importación, impresión, borrado con doble confirmación.
+- **Bitácora** y **Config** (con diagnóstico, licencia y código de dispositivo).
+
+## Licenciamiento
+
+- Al primer arranque se registra la instalación: **30 días de prueba**.
+- Vencido el plazo, la app se bloquea y muestra el **código de dispositivo** (p. ej. `ABCD-EFGH`).
+- El vendedor genera la **clave de activación** con un generador externo (no incluido en este repo): la clave es una función SHA-256 del secreto interno y del código del dispositivo, y queda **activa de forma permanente** para ese dispositivo.
+- Los datos del cliente no se pierden al vencer la prueba; se reactivan al entrar la clave.
+- Nota honesta: al ser HTML, el código es visible; la protección es práctica, no criptográficamente absoluta. Si el cliente borra los datos del navegador, la prueba reinicia (y también pierde sus datos, lo que desincentiva el truco).
 
 ## Estructura
 
 ```
 /
-├── index.html   # aplicación completa (autónoma)
+├── index.html              # app completa (PWA + licenciamiento)
+├── manifest.json           # manifiesto PWA
+├── verbum-mipyme.sw.js     # service worker (caché offline)
+├── icons/                  # iconos 192/512 + maskable
 └── README.md
 ```
 
 ## Publicación
 
-Funciona en cualquier alojamiento de archivos estáticos.
+**Render** (sitio estático): build command vacío, publish directory `./`.
 
-**GitHub Pages**: activar Pages sobre la rama `main`, raíz `/`.
-
-**Render** (sitio estático):
-- Build command: (ninguno)
-- Publish directory: `./`
-- La URL pública de la app es el propio `index.html` servido en la raíz.
+**Instalación en Android**: abrir la URL pública en Chrome → menú ⋮ → "Instalar aplicación" (o "Añadir a pantalla de inicio"). Aparece el icono VMD en el lanzador y corre a pantalla completa, sin barra del navegador.
 
 ## Verificación de operatividad
 
-Al ser un sitio estático no hay endpoint de servidor; la comprobación es que la URL responda HTTP 200 y cargue la aplicación:
-
-- `GET /` → 200 y carga VERBUM MIPYME DESARROLLO
-- Los datos se guardan localmente: un dispositivo no ve los datos de otro (privacidad por diseño).
-
-## Notas
-
-- Sin datos simulados: la app arranca vacía con datos reales del usuario.
-- Los respaldos exportados no contienen credenciales.
+Sitio estático: `GET /` → 200 y carga la app; `GET /manifest.json` → 200; `GET /verbum-mipyme.sw.js` → 200.
